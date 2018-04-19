@@ -3,7 +3,7 @@ import './ImageLinkForm.css';
 
 const ImageLinkForm = ({ onInputChange, onSubmit }) => {
   return (
-    <div>
+    <div className='mb4'>
       <p className='f2'>
         {'Welcome to the face detector app'}
       </p>
