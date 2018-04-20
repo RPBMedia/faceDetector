@@ -37,6 +37,7 @@ class App extends Component {
         label: 'Face detection Model',
       },
       faceBox: {},
+      tagList: [],
     }
   }
 
@@ -62,6 +63,17 @@ class App extends Component {
     console.log('Face box set: ', this.state.faceBox);
   }
 
+  calculateTagList = (generalData) => {
+    return generalData.outputs[0].data.concepts;
+  }
+
+  renderTagList = (tags) => {
+    this.setState({
+      tagList: tags,
+    })
+    console.log('Image tags: ', JSON.stringify(this.state.tagList));
+  }
+
   onInputChange = (event) => {
     console.log(event.target.value);
     this.setState({
@@ -72,8 +84,12 @@ class App extends Component {
   onSubmit = () => {
     console.log('Sending: ', this.state.input);
     console.log('Model: ', this.state.model);
+
+
     this.setState({
       imageUrl: this.state.input,
+      tagList: [],
+      faceBox: {},
     });
     const selectedModel = this.state.model.value;
 
@@ -83,6 +99,7 @@ class App extends Component {
           // do something with response
           if (selectedModel === 'GENERAL_MODEL') {
             console.log(response.outputs[0].data.concepts);
+            this.renderTagList(this.calculateTagList(response));
           } else {
             console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
             this.renderFaceBox(this.calculateFaceBoxLocation(response));
@@ -118,7 +135,19 @@ class App extends Component {
           onDropdownSelect={this.onModelSelect}
         />
         {this.state.imageUrl.length > 0 &&
-          <FaceRecognition faceBox={this.state.faceBox} imageUrl={this.state.imageUrl} />
+          <div className="flex">
+            <FaceRecognition faceBox={this.state.faceBox} imageUrl={this.state.imageUrl} />
+            {this.state.tagList.length > 0 &&
+              <div className="tagsContainer">
+                <h1 className="tagsHeader">Image tags</h1>
+                {this.state.tagList.map((tag, index) => {
+                  return (
+                    <div key={index}>{tag.name}</div>
+                  )
+                })}
+              </div>
+            }
+          </div>
         }
       </div>
     );

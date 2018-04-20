@@ -15,3 +15,8 @@
   bottom: 0;
   z-index: -1;
 }
+
+.tagsContainer {
+  margin-right: 50px;
+  margin-top: 20px;
+}
