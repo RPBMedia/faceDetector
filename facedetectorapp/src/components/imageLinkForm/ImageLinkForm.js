@@ -35,7 +35,7 @@ const ImageLinkForm = ({
         className="modelDropdown"
         options={models}
         onChange={onDropdownSelect}
-        value={modelLabel}
+        value={models[1]}
         placeholder='Select a model'
       />
       </div>

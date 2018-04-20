@@ -33,10 +33,33 @@ class App extends Component {
       input: '',
       imageUrl: '',
       model: {
-        value: 'GENERAL_MODEL',
-        label: 'General Model',
+        value: 'FACE_DETECT_MODEL',
+        label: 'Face detection Model',
       },
+      faceBox: {},
     }
+  }
+
+  calculateFaceBoxLocation = (boxData) => {
+    if(boxData.outputs.length > 0){
+      const boxCoords = boxData.outputs[0].data.regions[0].region_info.bounding_box;
+      const image = document.getElementById('inputimage')
+      const width = Number(image.width);
+      const height = Number(image.height);
+      return {
+        leftCol: boxCoords.left_col * width,
+        topRow: boxCoords.top_row * height,
+        rightCol: width - (boxCoords.right_col * width),
+        bottomRow: height - (boxCoords.bottom_row * height),
+      }
+    }
+  }
+
+  renderFaceBox = (box) => {
+    this.setState({
+      faceBox: box,
+    })
+    console.log('Face box set: ', this.state.faceBox);
   }
 
   onInputChange = (event) => {
@@ -56,22 +79,16 @@ class App extends Component {
 
     app.models.predict(
       Clarifai[selectedModel], this.state.input)
-      .then(
-        function(response) {
+      .then((response) => {
           // do something with response
-
           if (selectedModel === 'GENERAL_MODEL') {
             console.log(response.outputs[0].data.concepts);
           } else {
             console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
+            this.renderFaceBox(this.calculateFaceBoxLocation(response));
           }
-
-
-        },
-        function(err) {
-          // there was an error
-        }
-      );
+        })
+        .catch(err => console.log(err));
   }
 
   onModelSelect = (item) => {
@@ -99,10 +116,9 @@ class App extends Component {
           onInputChange={this.onInputChange}
           onSubmit={this.onSubmit}
           onDropdownSelect={this.onModelSelect}
-          modelLabel={this.state.model.label}
         />
         {this.state.imageUrl.length > 0 &&
-          <FaceRecognition imageUrl={this.state.imageUrl} />
+          <FaceRecognition faceBox={this.state.faceBox} imageUrl={this.state.imageUrl} />
         }
       </div>
     );
