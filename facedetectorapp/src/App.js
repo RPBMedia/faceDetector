@@ -117,6 +117,12 @@ class App extends Component {
     });
   }
 
+  onRouteChange = (route) => {
+    this.setState({
+      route: route,
+    })
+  }
+
   render() {
 
     return (
@@ -126,10 +132,10 @@ class App extends Component {
         />
         <div className='flex pa4 justify-between'>
           <Logo />
-          <Navigation />
+          <Navigation onRouteChange={this.onRouteChange} />
         </div>
         { this.state.route === 'login' ?
-          <Login />
+          <Login  onRouteChange={this.onRouteChange}/>
           :
           <div>
             <Rank />
