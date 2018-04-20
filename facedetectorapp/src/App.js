@@ -38,31 +38,36 @@ class App extends Component {
         value: 'FACE_DETECT_MODEL',
         label: 'Face detection Model',
       },
-      faceBox: {},
+      faceBoxes: [],
       tagList: [],
       route: 'login',
       isSignedIn: false,
     }
   }
 
-  calculateFaceBoxLocation = (boxData) => {
+  calculateFaceBoxesLocation = (boxData) => {
     if(boxData.outputs.length > 0){
-      const boxCoords = boxData.outputs[0].data.regions[0].region_info.bounding_box;
       const image = document.getElementById('inputimage')
       const width = Number(image.width);
       const height = Number(image.height);
-      return {
-        leftCol: boxCoords.left_col * width,
-        topRow: boxCoords.top_row * height,
-        rightCol: width - (boxCoords.right_col * width),
-        bottomRow: height - (boxCoords.bottom_row * height),
-      }
+
+      const faceBoxesArray = boxData.outputs[0].data.regions.map(region => {
+        const boxCoords = region.region_info.bounding_box;
+        return {
+          leftCol: boxCoords.left_col * width,
+          topRow: boxCoords.top_row * height,
+          rightCol: width - (boxCoords.right_col * width),
+          bottomRow: height - (boxCoords.bottom_row * height),
+        };
+      })
+      debugger;
+      return faceBoxesArray;
     }
   }
 
-  renderFaceBox = (box) => {
+  renderFaceBoxes = (boxes) => {
     this.setState({
-      faceBox: box,
+      faceBoxes: boxes,
     })
     console.log('Face box set: ', this.state.faceBox);
   }
@@ -85,16 +90,22 @@ class App extends Component {
     });
   }
 
+  resetState = () => {
+    this.setState({
+      tagList: [],
+      faceBoxes: [],
+    });
+  }
+
   onSubmit = () => {
     console.log('Sending: ', this.state.input);
     console.log('Model: ', this.state.model);
 
-
+    this.resetState();
     this.setState({
       imageUrl: this.state.input,
-      tagList: [],
-      faceBox: {},
-    });
+    })
+
     const selectedModel = this.state.model.value;
 
     app.models.predict(
@@ -106,7 +117,7 @@ class App extends Component {
             this.renderTagList(this.calculateTagList(response));
           } else {
             console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-            this.renderFaceBox(this.calculateFaceBoxLocation(response));
+            this.renderFaceBoxes(this.calculateFaceBoxesLocation(response));
           }
         })
         .catch(err => console.log(err));
@@ -123,7 +134,10 @@ class App extends Component {
     if(route === 'login') {
       this.setState({
         isSignedIn: false,
+        input: '',
+        imageUrl: '',
       });
+      this.resetState();
     } else if (route === 'home') {
       this.setState({
         isSignedIn: true,
@@ -140,7 +154,7 @@ class App extends Component {
       isSignedIn,
       route,
       imageUrl,
-      faceBox,
+      faceBoxes,
       tagList
     } = this.state;
 
@@ -164,7 +178,7 @@ class App extends Component {
             {
               imageUrl.length > 0 &&
               <div className="flex">
-                <FaceRecognition faceBox={faceBox} imageUrl={imageUrl} />
+                <FaceRecognition faceBoxes={faceBoxes} imageUrl={imageUrl} />
                 {tagList.length > 0 &&
                   <div className="tagsContainer">
                     <h1 className="tagsHeader">Image tags</h1>
