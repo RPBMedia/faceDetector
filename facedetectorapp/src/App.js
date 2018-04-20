@@ -8,6 +8,7 @@ import ImageLinkForm from './components/imageLinkForm/ImageLinkForm';
 import Rank from './components/rank/Rank';
 import FaceRecognition from './components/faceRecognition/FaceRecognition';
 import Login from './components/login/Login';
+import Register from './components/register/Register';
 import './App.css';
 
 const particlesParams = {
@@ -39,7 +40,8 @@ class App extends Component {
       },
       faceBox: {},
       tagList: [],
-      route: 'login'
+      route: 'login',
+      isSignedIn: false,
     }
   }
 
@@ -118,12 +120,29 @@ class App extends Component {
   }
 
   onRouteChange = (route) => {
+    if(route === 'login') {
+      this.setState({
+        isSignedIn: false,
+      });
+    } else if (route === 'home') {
+      this.setState({
+        isSignedIn: true,
+      });
+    }
     this.setState({
       route: route,
-    })
+    });
   }
 
   render() {
+
+    const {
+      isSignedIn,
+      route,
+      imageUrl,
+      faceBox,
+      tagList
+    } = this.state;
 
     return (
       <div className="App">
@@ -132,11 +151,9 @@ class App extends Component {
         />
         <div className='flex pa4 justify-between'>
           <Logo />
-          <Navigation onRouteChange={this.onRouteChange} />
+          <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         </div>
-        { this.state.route === 'login' ?
-          <Login  onRouteChange={this.onRouteChange}/>
-          :
+        { route === 'home' ?
           <div>
             <Rank />
             <ImageLinkForm
@@ -145,13 +162,13 @@ class App extends Component {
               onDropdownSelect={this.onModelSelect}
             />
             {
-              this.state.imageUrl.length > 0 &&
+              imageUrl.length > 0 &&
               <div className="flex">
-                <FaceRecognition faceBox={this.state.faceBox} imageUrl={this.state.imageUrl} />
-                {this.state.tagList.length > 0 &&
+                <FaceRecognition faceBox={faceBox} imageUrl={imageUrl} />
+                {tagList.length > 0 &&
                   <div className="tagsContainer">
                     <h1 className="tagsHeader">Image tags</h1>
-                    {this.state.tagList.map((tag, index) => {
+                    {tagList.map((tag, index) => {
                       return (
                         <div key={index}>{tag.name}</div>
                       )
@@ -161,6 +178,14 @@ class App extends Component {
               </div>
             }
           </div>
+          :
+          (
+            route === 'login' ?
+            <Login  onRouteChange={this.onRouteChange}/>
+            :
+            <Register  onRouteChange={this.onRouteChange}/>
+          )
+
         }
       </div>
     );
