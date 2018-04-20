@@ -7,6 +7,7 @@ import Logo from './components/logo/Logo';
 import ImageLinkForm from './components/imageLinkForm/ImageLinkForm';
 import Rank from './components/rank/Rank';
 import FaceRecognition from './components/faceRecognition/FaceRecognition';
+import Login from './components/login/Login';
 import './App.css';
 
 const particlesParams = {
@@ -38,6 +39,7 @@ class App extends Component {
       },
       faceBox: {},
       tagList: [],
+      route: 'login'
     }
   }
 
@@ -126,25 +128,30 @@ class App extends Component {
           <Logo />
           <Navigation />
         </div>
-
-        <Rank />
-
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onSubmit={this.onSubmit}
-          onDropdownSelect={this.onModelSelect}
-        />
-        {this.state.imageUrl.length > 0 &&
-          <div className="flex">
-            <FaceRecognition faceBox={this.state.faceBox} imageUrl={this.state.imageUrl} />
-            {this.state.tagList.length > 0 &&
-              <div className="tagsContainer">
-                <h1 className="tagsHeader">Image tags</h1>
-                {this.state.tagList.map((tag, index) => {
-                  return (
-                    <div key={index}>{tag.name}</div>
-                  )
-                })}
+        { this.state.route === 'login' ?
+          <Login />
+          :
+          <div>
+            <Rank />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onSubmit={this.onSubmit}
+              onDropdownSelect={this.onModelSelect}
+            />
+            {
+              this.state.imageUrl.length > 0 &&
+              <div className="flex">
+                <FaceRecognition faceBox={this.state.faceBox} imageUrl={this.state.imageUrl} />
+                {this.state.tagList.length > 0 &&
+                  <div className="tagsContainer">
+                    <h1 className="tagsHeader">Image tags</h1>
+                    {this.state.tagList.map((tag, index) => {
+                      return (
+                        <div key={index}>{tag.name}</div>
+                      )
+                    })}
+                  </div>
+                }
               </div>
             }
           </div>
