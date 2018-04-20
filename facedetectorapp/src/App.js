@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
+import { Helmet } from "react-helmet";
 
 import Navigation from './components/navigation/Navigation';
 import Logo from './components/logo/Logo';
@@ -160,6 +161,11 @@ class App extends Component {
 
     return (
       <div className="App">
+        <Helmet>
+            <meta charSet="utf-8" />
+            <title>My Title</title>
+            <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet" />
+        </Helmet>
         <Particles className='particles'
           params={particlesParams}
         />
