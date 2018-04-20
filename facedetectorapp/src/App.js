@@ -12,7 +12,7 @@ import './App.css';
 const particlesParams = {
   particles: {
     number: {
-      value: 130,
+      value: 60,
       density: {
         enable: true,
         value_area: 800,
@@ -32,6 +32,10 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
+      model: {
+        value: 'GENERAL_MODEL',
+        label: 'General Model',
+      },
     }
   }
 
@@ -44,15 +48,25 @@ class App extends Component {
 
   onSubmit = () => {
     console.log('Sending: ', this.state.input);
+    console.log('Model: ', this.state.model);
     this.setState({
       imageUrl: this.state.input,
     });
+    const selectedModel = this.state.model.value;
+
     app.models.predict(
-      Clarifai.FACE_DETECT_MODEL, this.state.input)
+      Clarifai[selectedModel], this.state.input)
       .then(
         function(response) {
           // do something with response
-          console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
+
+          if (selectedModel === 'GENERAL_MODEL') {
+            console.log(response.outputs[0].data.concepts);
+          } else {
+            console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
+          }
+
+
         },
         function(err) {
           // there was an error
@@ -60,18 +74,32 @@ class App extends Component {
       );
   }
 
+  onModelSelect = (item) => {
+    console.log(item);
+    this.setState({
+      model: item,
+    });
+  }
+
   render() {
+
     return (
       <div className="App">
         <Particles className='particles'
           params={particlesParams}
         />
-        <Navigation />
-        <Logo />
+        <div className='flex pa4 justify-between'>
+          <Logo />
+          <Navigation />
+        </div>
+
         <Rank />
+
         <ImageLinkForm
           onInputChange={this.onInputChange}
           onSubmit={this.onSubmit}
+          onDropdownSelect={this.onModelSelect}
+          modelLabel={this.state.model.label}
         />
         {this.state.imageUrl.length > 0 &&
           <FaceRecognition imageUrl={this.state.imageUrl} />

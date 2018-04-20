@@ -1,7 +1,26 @@
 import React from 'react';
 import './ImageLinkForm.css';
+import Dropdown from 'react-dropdown'
 
-const ImageLinkForm = ({ onInputChange, onSubmit }) => {
+const models = [
+  {
+    value:'GENERAL_MODEL',
+    label: 'General Model',
+    className: 'optionClass',
+  },
+  {
+    value:'FACE_DETECT_MODEL',
+    label: 'Face Detection Model',
+    className: 'optionClass',
+  }
+];
+
+const ImageLinkForm = ({
+  onInputChange,
+  onSubmit,
+  onDropdownSelect,
+  modelLabel,
+}) => {
   return (
     <div className='mb4'>
       <p className='f2'>
@@ -10,7 +29,18 @@ const ImageLinkForm = ({ onInputChange, onSubmit }) => {
       <p className='f5'>
         {'This detector will find faces in your pictures. Place a URL to a picture below to try it out'}
       </p>
-      <div className="center mt4">
+
+      <div className="dropdownContainer">
+      <Dropdown
+        className="modelDropdown"
+        options={models}
+        onChange={onDropdownSelect}
+        value={modelLabel}
+        placeholder='Select a model'
+      />
+      </div>
+
+      <div className="center mt5">
         <div className="center form pa4 br4 shadow-5">
           <input className='f4 pa2 w-70 center' type='text' onChange={onInputChange}/>
           <button
