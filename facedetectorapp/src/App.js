@@ -46,6 +46,12 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    fetch('http://localhost:3000')
+      .then(response => response.json())
+      .then(data => console.log(data));
+  }
+
   calculateFaceBoxesLocation = (boxData) => {
     if(boxData.outputs.length > 0){
       const image = document.getElementById('inputimage')
