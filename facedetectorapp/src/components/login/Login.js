@@ -32,7 +32,8 @@ class Login extends React.Component {
       email: this.state.signInEmail,
       password: this.state.signInPassword,
     })
-    if(response && response.data === 'success') {
+    if(response && response.status === 200 && !!response.data && response.data.id) {
+      this.props.loadUser(response.data);
       this.props.onRouteChange('home');
     }
   }

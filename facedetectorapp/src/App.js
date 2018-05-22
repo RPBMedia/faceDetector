@@ -43,6 +43,13 @@ class App extends Component {
       tagList: [],
       route: 'login',
       isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: '',
+      }
     }
   }
 
@@ -149,6 +156,18 @@ class App extends Component {
     });
   }
 
+  loadUser = (user) => {
+    this.setState({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        entries: user.entries,
+        joined: user.joined,
+      }
+    })
+  }
+
   render() {
 
     const {
@@ -175,7 +194,7 @@ class App extends Component {
         </div>
         { route === 'home' ?
           <div>
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries}/>
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onSubmit={this.onSubmit}
@@ -201,9 +220,9 @@ class App extends Component {
           :
           (
             route === 'login' ?
-            <Login  onRouteChange={this.onRouteChange}/>
+            <Login loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
             :
-            <Register  onRouteChange={this.onRouteChange}/>
+            <Register  onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>
           )
 
         }
