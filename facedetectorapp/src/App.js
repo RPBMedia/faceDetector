@@ -46,12 +46,6 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    fetch('http://localhost:3000')
-      .then(response => response.json())
-      .then(data => console.log(data));
-  }
-
   calculateFaceBoxesLocation = (boxData) => {
     if(boxData.outputs.length > 0){
       const image = document.getElementById('inputimage')
@@ -67,7 +61,6 @@ class App extends Component {
           bottomRow: height - (boxCoords.bottom_row * height),
         };
       })
-      debugger;
       return faceBoxesArray;
     }
   }
@@ -138,6 +131,7 @@ class App extends Component {
   }
 
   onRouteChange = (route) => {
+    console.log('Changing route: ', route);
     if(route === 'login') {
       this.setState({
         isSignedIn: false,
