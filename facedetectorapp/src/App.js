@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
 import { Helmet } from "react-helmet";
+import axios from 'axios';
 
 import Navigation from './components/navigation/Navigation';
 import Logo from './components/logo/Logo';
@@ -119,6 +120,21 @@ class App extends Component {
       Clarifai[selectedModel], this.state.input)
       .then((response) => {
           // do something with response
+          if(response) {
+            axios.put('http://localhost:3000/image', {
+              id: this.state.user.id,
+            }).then((axiosRes) => {
+              if(axiosRes.data) {
+                this.setState({
+                  ...this.state,
+                  user: {
+                    ...this.state.user,
+                    entries: axiosRes.data
+                  }
+                });
+              }
+            })
+          }
           if (selectedModel === 'GENERAL_MODEL') {
             console.log(response.outputs[0].data.concepts);
             this.renderTagList(this.calculateTagList(response));
