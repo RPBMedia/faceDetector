@@ -134,6 +134,7 @@ class App extends Component {
                 });
               }
             })
+            .catch(err => console.log(err));
           }
           if (selectedModel === 'GENERAL_MODEL') {
             console.log(response.outputs[0].data.concepts);
@@ -160,6 +161,7 @@ class App extends Component {
         isSignedIn: false,
         input: '',
         imageUrl: '',
+        user: null,
       });
       this.resetState();
     } else if (route === 'home') {
