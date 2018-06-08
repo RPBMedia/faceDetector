@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
 import { Helmet } from "react-helmet";
 import axios from 'axios';
 
@@ -24,10 +23,6 @@ const particlesParams = {
     }
   }
 };
-
-const app = new Clarifai.App({
- apiKey: 'f82243a424b74d87bde857025d8438a6'
-});
 
 class App extends Component {
 
@@ -115,9 +110,10 @@ class App extends Component {
     })
 
     const selectedModel = this.state.model.value;
-
-    app.models.predict(
-      Clarifai[selectedModel], this.state.input)
+      axios.post('http://localhost:3000/imageurl', {
+        selectedModel: selectedModel,
+        input: this.state.input,
+      })
       .then((response) => {
           // do something with response
           if(response) {
@@ -137,11 +133,11 @@ class App extends Component {
             .catch(err => console.log(err));
           }
           if (selectedModel === 'GENERAL_MODEL') {
-            console.log(response.outputs[0].data.concepts);
-            this.renderTagList(this.calculateTagList(response));
+            console.log(response.data.outputs[0].data.concepts);
+            this.renderTagList(this.calculateTagList(response.data));
           } else {
-            console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-            this.renderFaceBoxes(this.calculateFaceBoxesLocation(response));
+            console.log(response.data.outputs[0].data.regions[0].region_info.bounding_box);
+            this.renderFaceBoxes(this.calculateFaceBoxesLocation(response.data));
           }
         })
         .catch(err => console.log(err));
