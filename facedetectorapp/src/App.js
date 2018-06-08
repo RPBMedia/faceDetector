@@ -110,14 +110,14 @@ class App extends Component {
     })
 
     const selectedModel = this.state.model.value;
-      axios.post('http://localhost:3000/imageurl', {
+      axios.post(' https://aqueous-taiga-15531.herokuapp.com:3000/imageurl', {
         selectedModel: selectedModel,
         input: this.state.input,
       })
       .then((response) => {
           // do something with response
           if(response) {
-            axios.put('http://localhost:3000/image', {
+            axios.put(' https://aqueous-taiga-15531.herokuapp.com:3000/image', {
               id: this.state.user.id,
             }).then((axiosRes) => {
               if(axiosRes.data) {

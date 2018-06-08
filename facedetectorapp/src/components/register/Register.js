@@ -34,12 +34,12 @@ class Register extends React.Component {
   }
 
   async onSubmitRegister() {
-    const response = await axios.post('http://localhost:3000/register', {
+    const response = await axios.post(' https://aqueous-taiga-15531.herokuapp.com/register', {
       email: this.state.email,
       password: this.state.password,
       name: this.state.name,
     })
-    
+
     if(response && response.status === 200 && !!response.data) {
       this.props.loadUser(response.data);
       this.props.onRouteChange('home');
